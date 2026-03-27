@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión — Helados Chun Blum</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <div class="login-container">
+
+    <div class="login-logo">
+      <h1>Helados Chun Blum</h1>
+      <p>Ingresa a tu cuenta</p>
+    </div>
+
+    <div class="alert-error" id="alertaError">
+      Usuario o contraseña incorrectos. Intenta de nuevo.
+    </div>
+
+    <form id="formLogin" novalidate>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico</label>
+        <input
+          type="email"
+          id="correo"
+          placeholder="correo@ejemplo.com"
+          autocomplete="email"
+          required
+        />
+        <span class="error-msg" id="errorCorreo">
+          Ingresa un correo válido.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <input
+          type="password"
+          id="contrasena"
+          placeholder="Tu contraseña"
+          autocomplete="current-password"
+          required
+        />
+        <span class="error-msg" id="errorContrasena">
+          La contraseña no puede estar vacía.
+        </span>
+      </div>
+
+      <button type="submit" class="btn-login" id="btnLogin">
+        Ingresar
+      </button>
+
+    </form>
+
+  </div>
+
+  <script type="module" src="../js/auth.js"></script>
+
+</body>
+</html>
