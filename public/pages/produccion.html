@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Producción — Helados Chun Blum</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="pagina">
+
+  <!-- Sidebar (escritorio) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Helados Chun Blum</h1>
+      <p>Panel de producción</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="produccion.html" class="activo">Registrar lote</a>
+      <a href="historial-lotes.html">Historial de lotes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="btnCerrarSesionSidebar">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Navbar (móvil) -->
+  <nav class="navbar">
+    <h2>Registrar lote</h2>
+    <div class="navbar-acciones">
+      <button class="btn-cerrar-sesion" id="btnCerrarSesion">Salir</button>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="contenido">
+
+    <!-- Confirmación -->
+    <div class="alert-success" id="alertaExito">
+      Lote registrado exitosamente. El inventario ha sido actualizado.
+    </div>
+
+    <!-- Error -->
+    <div class="alert-error" id="alertaError"></div>
+
+    <!-- Formulario -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Nuevo lote de producción</h3>
+      </div>
+
+      <form id="formLote" novalidate>
+
+        <!-- Selector de producto -->
+        <div class="form-group">
+          <label for="selectProducto">Producto</label>
+          <select id="selectProducto" class="form-select">
+            <option value="">Cargando productos...</option>
+          </select>
+          <span class="error-msg" id="errorProducto">
+            Selecciona un producto.
+          </span>
+          <!-- Info del producto seleccionado -->
+          <div class="producto-info" id="productoInfo">
+            Stock actual:
+            <span id="stockActual">—</span>
+            <span class="stock-badge" id="estadoBadge"></span>
+          </div>
+        </div>
+
+        <!-- Cantidad producida -->
+        <div class="form-group">
+          <label for="inputCantidad">Unidades producidas</label>
+          <input
+            type="number"
+            id="inputCantidad"
+            placeholder="Ej: 30"
+            min="1"
+            step="1"
+          />
+          <span class="error-msg" id="errorCantidad">
+            Ingresa una cantidad válida mayor a cero.
+          </span>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-group">
+          <label for="inputObservaciones">
+            Observaciones
+            <span style="font-weight:400; color:#80868b; font-size:12px;">
+              (opcional)
+            </span>
+          </label>
+          <textarea
+            id="inputObservaciones"
+            class="form-textarea"
+            placeholder="Ej: Lote elaborado con leche entera, sin novedades."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnGuardar">
+          Registrar lote
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Historial reciente -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Últimos lotes registrados</h3>
+      </div>
+      <div id="historialReciente">
+        <div class="loading">Cargando historial...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="../js/produccion.js"></script>
+
+</body>
+</html>
