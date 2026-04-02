@@ -15,7 +15,7 @@ onAuthStateChanged(auth, async (user) => {
 
   const docSnap = await getDoc(doc(db, "usuarios", user.uid));
   if (!docSnap.exists() || !["operaria", "admin"].includes(docSnap.data().rol)) {
-    window.location.href = "../pages/login.html";
+    window.location.href = "../pages/login.html?error=permisos";
     return;
   }
 

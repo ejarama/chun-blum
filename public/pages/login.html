@@ -57,6 +57,14 @@
 
   </div>
 
+    <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "permisos") {
+      document.getElementById("alertaError").textContent =
+        "No tienes permisos para acceder a esa sección.";
+      document.getElementById("alertaError").classList.add("visible");
+    }
+  </script>
   <script type="module" src="../js/auth.js"></script>
 
 </body>
