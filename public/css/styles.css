@@ -635,3 +635,124 @@ body {
     flex: 1;
   }
 }
+
+/* ── Producción ──────────────────────────────── */
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  font-size: 15px;
+  color: var(--gris-texto);
+  background: var(--blanco);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23595959' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.form-select:focus {
+  border-color: var(--azul-principal);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+.form-select.input-error {
+  border-color: var(--rojo-error);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  font-size: 15px;
+  color: var(--gris-texto);
+  background: var(--blanco);
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+  border-color: var(--azul-principal);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+.alert-success {
+  background: #e6f4ea;
+  border: 1px solid #b7dfbf;
+  border-radius: var(--radio);
+  color: var(--verde-exito, #1e7145);
+  font-size: 13px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.alert-success.visible {
+  display: block;
+}
+
+.producto-info {
+  background: var(--gris-claro);
+  border-radius: var(--radio);
+  padding: 10px 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--gris-texto);
+  display: none;
+}
+
+.producto-info.visible {
+  display: block;
+}
+
+.producto-info span {
+  font-weight: 500;
+  color: var(--azul-principal);
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.stock-disponible {
+  background: #e6f4ea;
+  color: #1e7145;
+}
+
+.stock-agotado {
+  background: #fce8e6;
+  color: var(--rojo-error);
+}
+
+.stock-produccion {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.historial-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gris-borde);
+  font-size: 13px;
+}
+
+.historial-item:last-child {
+  border-bottom: none;
+}
+
+.historial-fecha {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 3px;
+}

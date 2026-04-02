@@ -1,0 +1,9 @@
+{
+  "name": "chun-blum",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.4.0",
+    "firebase": "^12.11.0"
+  }
+}
