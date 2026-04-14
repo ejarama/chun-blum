@@ -1,6 +1,7 @@
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { collection, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { renderizarSidebar, configurarCerrarSesion } from "../js/sidebar.js";
 
 let todosLosUsuarios = [];
 
@@ -12,12 +13,17 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-  if (!docSnap.exists() || docSnap.data().rol !== "admin") {
-    window.location.href = "../pages/login.html";
+  if (!docSnap.exists() || !["admin"].includes(docSnap.data().rol)) {
+    window.location.href = "../pages/login.html?error=permisos";
     return;
   }
 
+  const rol = docSnap.data().rol;
+  console.log("Rol del usuario:", rol);
+  renderizarSidebar(rol, "usuarios.html");
+  configurarCerrarSesion();
   cargarUsuarios();
+
 });
 
 // ── Referencias DOM ───────────────────────────────────
@@ -42,15 +48,6 @@ const buscador    = document.getElementById("buscador");
 const filtroRol   = document.getElementById("filtroRol");
 const filtroEstado = document.getElementById("filtroEstado");
 
-// ── Cerrar sesión ─────────────────────────────────────
-btnCerrarSesion.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
-document.getElementById("btnCerrarSesionSidebar")?.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
 
 // ── listeners de los filtros─────────────────────────────────────
 buscador.addEventListener("input", aplicarFiltros);

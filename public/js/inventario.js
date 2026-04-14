@@ -1,8 +1,9 @@
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   collection, doc, getDoc, onSnapshot, query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { renderizarSidebar, configurarCerrarSesion } from "../js/sidebar.js";
 
 // ── Verificar que solo el admin accede ────────────────────────────
 onAuthStateChanged(auth, async (user) => {
@@ -12,11 +13,14 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-  if (!docSnap.exists() || !["admin"].includes(docSnap.data().rol)) {
+  if (!docSnap.exists() || !["admin", "operaria"].includes(docSnap.data().rol)) {
     window.location.href = "../pages/login.html?error=permisos";
     return;
   }
 
+  const rol = docSnap.data().rol;
+  renderizarSidebar(rol, "inventario.html");
+  configurarCerrarSesion();
   inicializarInventario();
 });
 
@@ -32,19 +36,6 @@ const filtroStock     = document.getElementById("filtroStock");
 const statDisponible  = document.getElementById("statDisponible");
 const statAgotado     = document.getElementById("statAgotado");
 const statProduccion  = document.getElementById("statProduccion");
-
-// ── Cerrar sesión ─────────────────────────────────────────────────
-document.getElementById("btnCerrarSesion")?.addEventListener("click", async () => {
-  if (unsubscribe) unsubscribe();
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
-
-document.getElementById("btnCerrarSesionSidebar")?.addEventListener("click", async () => {
-  if (unsubscribe) unsubscribe();
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
 
 // ── Inicializar inventario con tiempo real ────────────────────────
 function inicializarInventario() {
