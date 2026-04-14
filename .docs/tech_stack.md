@@ -8,7 +8,7 @@
 | Base de datos | Firebase Firestore | 10.11.0 | SDK web modular cargado desde CDN de gstatic |
 | Autenticación | Firebase Authentication | 10.11.0 | Solo correo y contraseña |
 | Hosting | Firebase Hosting | — | Plan Spark (gratuito) |
-| Scripts Node.js | Firebase Admin / npm | 12.x | Solo para scripts de seed y utilidades |
+| Scripts Node.js | Firebase / dotenv / npm | 12.x | Solo para scripts de seed y utilidades |
 | Control de versiones | Git + GitHub | — | Git Flow simplificado |
 
 ---
@@ -44,8 +44,9 @@ Cada página del sistema sigue este patrón exacto. No apartarse de él.
 
 ```javascript
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { renderizarSidebar, configurarCerrarSesion } from "../js/sidebar.js";
 
 // ── 1. Verificar autenticación y rol ──────────────────────────────
 // SIEMPRE es lo primero. Definir qué roles pueden acceder.
@@ -64,7 +65,12 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   usuarioActual = { uid: user.uid, ...docSnap.data() };
-  inicializarPagina(); // llamar función de inicialización
+
+  // Renderizar sidebar y configurar cerrar sesión SIEMPRE antes de inicializar
+  renderizarSidebar(docSnap.data().rol, "nombre-pagina.html");
+  configurarCerrarSesion();
+
+  inicializarPagina();
 });
 
 // ── 2. Estado de la página ────────────────────────────────────────
@@ -73,24 +79,12 @@ let usuarioActual = null;
 // ── 3. Referencias DOM ────────────────────────────────────────────
 const miElemento = document.getElementById("miElemento");
 
-// ── 4. Cerrar sesión ──────────────────────────────────────────────
-// Incluir siempre ambos botones (móvil y sidebar desktop)
-document.getElementById("btnCerrarSesion")?.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
-
-document.getElementById("btnCerrarSesionSidebar")?.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
-
-// ── 5. Inicialización ─────────────────────────────────────────────
+// ── 4. Inicialización ─────────────────────────────────────────────
 async function inicializarPagina() {
   await cargarDatos();
 }
 
-// ── 6. Funciones de datos ─────────────────────────────────────────
+// ── 5. Funciones de datos ─────────────────────────────────────────
 async function cargarDatos() {
   try {
     // lógica de carga
@@ -99,6 +93,71 @@ async function cargarDatos() {
   }
 }
 ```
+
+> **IMPORTANTE:** No agregar listeners de cerrar sesión manualmente en cada archivo.
+> El `configurarCerrarSesion()` de `sidebar.js` lo maneja para todos los botones
+> (`btnCerrarSesion` en móvil y `btnCerrarSesionSidebar` en escritorio).
+
+---
+
+## Sidebar dinámico — cómo usarlo
+
+Todas las páginas con sidebar usan `sidebar.js` en lugar de definir los
+enlaces manualmente en el HTML. Esto garantiza consistencia y actualización
+automática según el rol del usuario.
+
+### Importar en el archivo JS de la página
+
+```javascript
+import { renderizarSidebar, configurarCerrarSesion } from "../js/sidebar.js";
+```
+
+### Llamar dentro del onAuthStateChanged
+
+```javascript
+const rol = docSnap.data().rol;
+renderizarSidebar(rol, "nombre-de-la-pagina.html");
+configurarCerrarSesion();
+```
+
+### Estructura mínima del sidebar en el HTML
+
+```html
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Helados Chun Blum</h1>
+    <p>Cargando...</p>
+  </div>
+  <nav class="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <button id="btnCerrarSesionSidebar">Cerrar sesión</button>
+  </div>
+</aside>
+```
+
+### Para agregar un ítem nuevo al menú
+
+Solo tocar `public/js/sidebar.js` — agregar el ítem en el array `MENU_ITEMS`
+con su `label`, `href` y los `roles` que pueden verlo. No tocar los HTML.
+
+```javascript
+{
+  label: "Nueva sección",
+  href:  "nueva-seccion.html",
+  roles: ["admin", "vendedor"],
+},
+```
+
+### Ítems actuales del menú y roles que los ven
+
+| Ítem del menú | Roles que lo ven |
+|---------------|-----------------|
+| Inicio | `admin` |
+| Usuarios | `admin` |
+| Inventario | `admin`, `operaria` |
+| Registrar lote | `admin`, `operaria` |
+| Pedidos | `admin`, `vendedor` |
+| Mis pedidos | `distribuidor` |
 
 ---
 
@@ -109,9 +168,9 @@ async function cargarDatos() {
 | `login.html` | Sin autenticación |
 | `dashboard.html` | `admin` |
 | `usuarios.html` | `admin` |
-| `inventario.html` | `admin` |
-| `produccion.html` | `operaria`, `admin` |
-| `pedidos.html` | `vendedor`, `admin` |
+| `inventario.html` | `admin`, `operaria` |
+| `produccion.html` | `admin`, `operaria` |
+| `pedidos.html` | `admin`, `vendedor` |
 | `catalogo.html` | `distribuidor` |
 
 **Implementación del guard de ruta:**
@@ -254,24 +313,28 @@ formMiPagina.addEventListener("submit", async (e) => { ... });
 ### Ramas
 - `main` — producción. Solo recibe merges desde `develop` al cerrar sprint.
 - `develop` — integración. Todas las historias confluyen aquí vía PR.
-- `feature/hu-X.X-descripcion` — una por historia de usuario.
+- `feature/isg-[numero]-hu-[X.X]-descripcion` — una por historia de usuario.
+- `chore/descripcion` — para mejoras técnicas transversales sin funcionalidad nueva.
+- `hotfix/descripcion` — solo para bugs críticos en producción.
 
 ### Crear rama y trabajar
 ```bash
 git checkout develop
 git pull origin develop
-git checkout -b feature/hu-2.2-inventario-admin
+git checkout -b feature/isg-38-hu-2.3-catalogo-productos
 
 # trabajar...
 git add .
 git commit -m "feat: descripcion de lo que se hizo"
-git push origin feature/hu-2.2-inventario-admin
+git push origin feature/isg-38-hu-2.3-catalogo-productos
 ```
 
 ### Abrir Pull Request
-- **base:** `develop` ← **compare:** `feature/hu-X.X`
+- **base:** `develop` ← **compare:** `feature/isg-XX-hu-X.X`
+- Título: `feat: (ISG-XX) HU-X.X descripcion corta`
 - Asignar a Eliana Jaramillo como reviewer
 - No hacer merge sin aprobación de la líder
+- Incluir descripción con: qué se hizo, cómo probarlo y criterios verificados
 
 ### Convención de commits
 ```
@@ -280,6 +343,7 @@ fix:      corrección de bug
 style:    cambios de CSS/UI sin lógica
 refactor: mejora de código sin cambio funcional
 docs:     comentarios o documentación
+chore:    tareas técnicas (configuración, dependencias)
 ```
 
 ---
@@ -289,16 +353,17 @@ docs:     comentarios o documentación
 ```
 chun-blum/
 ├── public/
-│   ├── assets/               ← imágenes, íconos
+│   ├── assets/                 ← imágenes, íconos
 │   ├── css/
-│   │   └── styles.css        ← ÚNICO archivo de estilos
+│   │   └── styles.css          ← ÚNICO archivo de estilos
 │   ├── js/
 │   │   ├── firebase-config.js  ← NO está en Git (.gitignore)
-│   │   ├── auth.js           ← lógica de login
-│   │   ├── router.js         ← protección de rutas (próximo)
-│   │   ├── usuarios.js       ← HU-1.2
-│   │   ├── produccion.js     ← HU-2.1
-│   │   └── [pagina].js       ← un archivo por página
+│   │   ├── auth.js             ← lógica de login y redirección por rol
+│   │   ├── sidebar.js          ← sidebar dinámico centralizado por rol
+│   │   ├── usuarios.js         ← HU-1.2 gestión de usuarios
+│   │   ├── produccion.js       ← HU-2.1 registro de lotes
+│   │   ├── inventario.js       ← HU-2.2 vista de inventario
+│   │   └── [pagina].js         ← un archivo JS por cada página nueva
 │   ├── pages/
 │   │   ├── login.html
 │   │   ├── dashboard.html
@@ -307,14 +372,14 @@ chun-blum/
 │   │   ├── produccion.html
 │   │   ├── pedidos.html
 │   │   └── catalogo.html
-│   └── index.html            ← redirige a login.html
+│   └── index.html              ← redirige automáticamente a login.html
 ├── scripts/
-│   └── seed-productos.js     ← script Node.js para datos iniciales
+│   └── seed-productos.js       ← script Node.js para cargar datos iniciales
 ├── .docs/
-│   ├── project_scope.md      ← este archivo y los otros dos
-│   ├── design_system.md
-│   └── tech_stack.md
-├── .env                      ← NO está en Git (.gitignore)
+│   ├── project_scope.md        ← alcance, colecciones Firestore y reglas de negocio
+│   ├── design_system.md        ← componentes, variables CSS y convenciones UI
+│   └── tech_stack.md           ← este archivo
+├── .env                        ← NO está en Git (.gitignore)
 ├── .firebaserc
 ├── .gitignore
 ├── firebase.json
@@ -334,7 +399,7 @@ firebase serve --only hosting
 # Desplegar a producción
 firebase deploy --only hosting
 
-# Ejecutar script de seed
+# Ejecutar script de seed de productos
 node scripts/seed-productos.js
 
 # Ver ramas locales
@@ -342,6 +407,9 @@ git branch
 
 # Actualizar rama local desde remoto
 git pull origin develop
+
+# Crear rama nueva desde develop actualizado
+git checkout develop && git pull origin develop && git checkout -b feature/isg-XX-hu-X.X-descripcion
 ```
 
 ---
@@ -351,9 +419,12 @@ git pull origin develop
 - ❌ Importar Firebase desde npm en archivos del frontend (solo para scripts Node.js)
 - ❌ Hacer commit de `firebase-config.js` o `.env`
 - ❌ Crear archivos CSS adicionales o usar `<style>` en HTML
-- ❌ Hacer push directo a `main` o `develop`
+- ❌ Hacer push directo a `main` o `develop` con código funcional
 - ❌ Modificar el stock sin usar `runTransaction`
 - ❌ Usar `var` — solo `const` y `let`
 - ❌ Usar `.then()` encadenados — solo `async/await`
 - ❌ Dejar `console.log` en código que va a PR
 - ❌ Crear colecciones nuevas en Firestore sin coordinarlo con Eliana
+- ❌ Agregar listeners de cerrar sesión manualmente — usar `configurarCerrarSesion()` de `sidebar.js`
+- ❌ Definir enlaces del sidebar en el HTML — el `sidebar.js` los genera dinámicamente
+- ❌ Crear un nuevo media query en styles.css — agregar dentro del `@media (min-width: 768px)` existente
