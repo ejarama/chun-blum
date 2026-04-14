@@ -1,12 +1,13 @@
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   collection, doc, getDoc, getDocs,
   query, orderBy, limit,
   runTransaction, addDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { renderizarSidebar, configurarCerrarSesion } from "../js/sidebar.js";
 
-// ── Verificar que solo la operaria accede ─────────────────────────
+// ── Verificar que solo la operaria o admin accede ─────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../pages/login.html";
@@ -20,6 +21,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   usuarioActual = { uid: user.uid, ...docSnap.data() };
+  const rol = docSnap.data().rol;
+  renderizarSidebar(rol, "produccion.html");
+  configurarCerrarSesion();
   await cargarProductos();
   await cargarHistorialReciente();
 });
@@ -43,16 +47,28 @@ const errorProducto    = document.getElementById("errorProducto");
 const errorCantidad    = document.getElementById("errorCantidad");
 const historialReciente = document.getElementById("historialReciente");
 
-// ── Cerrar sesión ─────────────────────────────────────────────────
-document.getElementById("btnCerrarSesion")?.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
 
-document.getElementById("btnCerrarSesionSidebar")?.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../pages/login.html";
-});
+function configurarSidebar(rol) {
+  const nav = document.querySelector(".sidebar-nav");
+  const logo = document.querySelector(".sidebar-logo p");
+
+  if (rol === "operaria") {
+    logo.textContent = "Panel de producción";
+    nav.innerHTML = `
+      <a href="produccion.html" class="activo">Registrar lote</a>
+      <a href="inventario.html">Inventario</a>
+    `;
+  } else {
+    logo.textContent = "Panel de administración";
+    nav.innerHTML = `
+      <a href="dashboard.html">Inicio</a>
+      <a href="usuarios.html">Usuarios</a>
+      <a href="inventario.html">Inventario</a>
+      <a href="produccion.html" class="activo">Registrar lote</a>
+      <a href="pedidos.html">Pedidos</a>
+    `;
+  }
+}
 
 // ── Cargar productos desde Firestore ──────────────────────────────
 async function cargarProductos() {
