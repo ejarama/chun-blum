@@ -756,3 +756,189 @@ body {
   color: #80868b;
   margin-top: 3px;
 }
+
+/* ── Inventario ──────────────────────────────── */
+.inventario-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.inventario-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 14px;
+  text-align: center;
+  box-shadow: var(--sombra);
+  border-top: 3px solid var(--gris-borde);
+}
+
+.stat-card.stat-disponible {
+  border-top-color: #1e7145;
+}
+
+.stat-card.stat-agotado {
+  border-top-color: var(--rojo-error);
+}
+
+.stat-card.stat-produccion {
+  border-top-color: #e65100;
+}
+
+.stat-numero {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 4px;
+}
+
+.producto-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gris-borde);
+  gap: 10px;
+}
+
+.producto-row:last-child {
+  border-bottom: none;
+}
+
+.producto-row.stock-bajo {
+  background: #fff8f8;
+  margin: 0 -16px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--rojo-error);
+}
+
+.producto-row-info {
+  flex: 1;
+}
+
+.producto-row-nombre {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gris-texto);
+}
+
+.producto-row-ref {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 2px;
+}
+
+.producto-row-stock {
+  text-align: right;
+  min-width: 80px;
+}
+
+.stock-numero {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+.stock-numero.bajo {
+  color: var(--rojo-error);
+}
+
+.stock-unidad {
+  font-size: 11px;
+  color: #80868b;
+}
+
+.producto-row-estado {
+  min-width: 100px;
+  text-align: center;
+}
+
+.alerta-stock-icon {
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.ultima-actualizacion {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 3px;
+}
+
+.indicador-tiempo-real {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #1e7145;
+  margin-bottom: 12px;
+}
+
+.punto-verde {
+  width: 8px;
+  height: 8px;
+  background: #1e7145;
+  border-radius: 50%;
+  animation: pulso 2s ease-in-out infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@media (min-width: 768px) {
+  .inventario-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .producto-row {
+    display: grid;
+    grid-template-columns: 1fr 120px 140px 160px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .producto-row-stock {
+    text-align: center;
+  }
+
+  .producto-row-estado {
+    text-align: center;
+  }
+
+  .tabla-header {
+    display: grid;
+    grid-template-columns: 1fr 120px 140px 160px;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--gris-borde);
+    margin-bottom: 4px;
+  }
+
+  .tabla-header span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #80868b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .tabla-header span:nth-child(2),
+  .tabla-header span:nth-child(3) {
+    text-align: center;
+  }
+}
