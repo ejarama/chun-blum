@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo — Helados Chun Blum</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="pagina">
+
+  <!-- Sidebar (escritorio) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Helados Chun Blum</h1>
+      <p>Cargando...</p>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <button id="btnCerrarSesionSidebar">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Navbar (móvil) -->
+  <nav class="navbar">
+    <h2>Catálogo</h2>
+    <div class="navbar-acciones">
+      <button class="btn-cerrar-sesion" id="btnCerrarSesion">Salir</button>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="contenido">
+
+    <!-- Bienvenida -->
+    <div class="catalogo-bienvenida">
+      <h3 id="saludo">Bienvenido</h3>
+      <p>Consulta los productos disponibles y realiza tu pedido.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="catalogo-stats" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="catalogo-stat">
+            <div class="catalogo-stat-numero" id="statTotalProductos">—</div>
+            <div class="catalogo-stat-label">Referencias Disponibles</div>
+        </div>
+        <div class="catalogo-stat">
+            <div class="catalogo-stat-numero" id="statEnProduccion">—</div>
+            <div class="catalogo-stat-label">Referencias en producción</div>
+        </div>
+        <div class="catalogo-stat">
+            <div class="catalogo-stat-numero" id="statTotalUnidades">—</div>
+            <div class="catalogo-stat-label">Unidades totales</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Productos</h3>
+      </div>
+
+      <div class="indicador-tiempo-real">
+        <div class="punto-verde"></div>
+        <span>Actualizando en tiempo real</span>
+      </div>
+
+      <div class="filtros-bar">
+        <input
+          type="text"
+          id="buscador"
+          class="filtro-input"
+          placeholder="Buscar producto..."
+        />
+        <select id="filtroEstado" class="filtro-select">
+          <option value="">Todos</option>
+          <option value="disponible">Disponible</option>
+          <option value="en_produccion">En producción</option>
+        </select>
+      </div>
+
+      <!-- Catálogo -->
+      <div id="catalogoProductos" class="catalogo-grid">
+        <div class="loading">Cargando catálogo...</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="../js/catalogo.js"></script>
+
+</body>
+</html>

@@ -942,3 +942,132 @@ body {
     text-align: center;
   }
 }
+
+/* ── Catálogo distribuidor ───────────────────── */
+.catalogo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.producto-card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--gris-borde);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: box-shadow 0.2s;
+}
+
+.producto-card:hover {
+  box-shadow: var(--sombra);
+}
+
+.producto-card.agotado {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.producto-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--gris-claro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.producto-card-info {
+  flex: 1;
+}
+
+.producto-card-nombre {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gris-texto);
+}
+
+.producto-card-ref {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 2px;
+}
+
+.producto-card-precio {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--azul-principal);
+  white-space: nowrap;
+}
+
+.producto-card-stock {
+  font-size: 11px;
+  color: #80868b;
+  text-align: right;
+  margin-top: 2px;
+}
+
+.catalogo-bienvenida {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--azul-principal);
+}
+
+.catalogo-bienvenida h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  margin-bottom: 4px;
+}
+
+.catalogo-bienvenida p {
+  font-size: 13px;
+  color: #80868b;
+}
+
+.catalogo-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.catalogo-stat {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  padding: 12px 14px;
+  text-align: center;
+  border: 1px solid var(--gris-borde);
+}
+
+.catalogo-stat-numero {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  line-height: 1;
+}
+
+.catalogo-stat-label {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 4px;
+}
+
+@media (min-width: 768px) {
+  .catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .catalogo-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
