@@ -34,57 +34,178 @@
     <!-- Bienvenida -->
     <div class="catalogo-bienvenida">
       <h3 id="saludo">Bienvenido</h3>
-      <p>Consulta los productos disponibles y realiza tu pedido.</p>
+      <p>Selecciona los productos y las cantidades para armar tu pedido.</p>
     </div>
 
     <!-- Stats -->
     <div class="catalogo-stats" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="catalogo-stat">
-            <div class="catalogo-stat-numero" id="statTotalProductos">—</div>
-            <div class="catalogo-stat-label">Referencias Disponibles</div>
-        </div>
-        <div class="catalogo-stat">
-            <div class="catalogo-stat-numero" id="statEnProduccion">—</div>
-            <div class="catalogo-stat-label">Referencias en producción</div>
-        </div>
-        <div class="catalogo-stat">
-            <div class="catalogo-stat-numero" id="statTotalUnidades">—</div>
-            <div class="catalogo-stat-label">Unidades totales</div>
-        </div>
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statTotalProductos">—</div>
+        <div class="catalogo-stat-label">Referencias</div>
+      </div>
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statEnProduccion">—</div>
+        <div class="catalogo-stat-label">En producción</div>
+      </div>
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statTotalUnidades">—</div>
+        <div class="catalogo-stat-label">Unidades totales</div>
+      </div>
     </div>
 
-    <!-- Filtros -->
-    <div class="card">
-      <div class="card-header">
-        <h3>Productos</h3>
+    <!-- Layout catálogo + carrito -->
+    <div class="pedido-layout">
+
+      <!-- Catálogo -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Productos</h3>
+        </div>
+
+        <div class="indicador-tiempo-real">
+          <div class="punto-verde"></div>
+          <span>Actualizando en tiempo real</span>
+        </div>
+
+        <div class="filtros-bar">
+          <input
+            type="text"
+            id="buscador"
+            class="filtro-input"
+            placeholder="Buscar producto..."
+          />
+          <select id="filtroEstado" class="filtro-select">
+            <option value="">Todos</option>
+            <option value="disponible">Disponible</option>
+            <option value="en_produccion">En producción</option>
+          </select>
+        </div>
+
+        <div id="catalogoProductos" class="catalogo-grid">
+          <div class="loading">Cargando catálogo...</div>
+        </div>
       </div>
 
-      <div class="indicador-tiempo-real">
-        <div class="punto-verde"></div>
-        <span>Actualizando en tiempo real</span>
+      <!-- Carrito -->
+      <div class="card" id="panelCarrito">
+        <div class="card-header">
+          <h3>Mi pedido</h3>
+          <span id="carritoContador" class="badge-rol" style="display:none">0 items</span>
+        </div>
+
+        <div id="carritoContenido">
+          <div class="carrito-vacio">
+            Agrega productos desde el catálogo para armar tu pedido.
+          </div>
+        </div>
+
+        <div id="carritoFooter" style="display:none">
+          <div class="carrito-total">
+            <div>
+              <div class="carrito-total-label">Total del pedido</div>
+              <div class="carrito-total-unidades" id="carritoTotalUnidades"></div>
+            </div>
+            <div class="carrito-total-valor" id="carritoTotal">$0</div>
+          </div>
+          <button class="btn-login" id="btnConfirmarPedido" style="margin-top:14px;">
+            Confirmar pedido
+          </button>
+        </div>
       </div>
 
-      <div class="filtros-bar">
+    </div>
+
+  </div>
+
+  <!-- Modal de confirmación del pedido -->
+  <div class="modal-overlay" id="modalConfirmacion">
+    <div class="modal" style="max-height:90vh;overflow-y:auto;">
+      <h3>Confirmar pedido</h3>
+
+      <div class="alert-error" id="alertaModalError"></div>
+
+      <!-- Resumen del pedido -->
+      <div style="margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:500;color:var(--gris-texto);margin-bottom:8px;">
+          Resumen
+        </p>
+        <div id="resumenProductos"></div>
+        <div class="resumen-total">
+          <span class="resumen-total-label">Total</span>
+          <span class="resumen-total-valor" id="resumenTotal"></span>
+        </div>
+      </div>
+
+      <!-- Fecha de entrega -->
+      <div class="form-group">
+        <label for="inputFechaEntrega">Fecha de entrega solicitada</label>
+        <input type="date" id="inputFechaEntrega" />
+        <span class="error-msg" id="errorFecha">
+          La fecha debe ser mínimo 2 días desde hoy.
+        </span>
+      </div>
+
+      <!-- Dirección -->
+      <div class="form-group">
+        <label for="inputDireccion">Dirección de entrega</label>
         <input
           type="text"
-          id="buscador"
-          class="filtro-input"
-          placeholder="Buscar producto..."
+          id="inputDireccion"
+          placeholder="Ej: Calle 10 #5-23, Santa Fe de Antioquia"
         />
-        <select id="filtroEstado" class="filtro-select">
-          <option value="">Todos</option>
-          <option value="disponible">Disponible</option>
-          <option value="en_produccion">En producción</option>
+        <span class="error-msg" id="errorDireccion">
+          Ingresa la dirección de entrega.
+        </span>
+      </div>
+
+      <!-- Forma de pago -->
+      <div class="form-group">
+        <label for="selectFormaPago">Forma de pago</label>
+        <select id="selectFormaPago" class="form-select">
+          <option value="efectivo">Efectivo al momento de la entrega</option>
+          <option value="transferencia">Transferencia al momento de la entrega</option>
         </select>
       </div>
 
-      <!-- Catálogo -->
-      <div id="catalogoProductos" class="catalogo-grid">
-        <div class="loading">Cargando catálogo...</div>
+      <!-- Observaciones -->
+      <div class="form-group">
+        <label for="inputObservaciones">
+          Observaciones
+          <span style="font-weight:400;color:#80868b;font-size:12px;">(opcional)</span>
+        </label>
+        <textarea
+          id="inputObservaciones"
+          class="form-textarea"
+          placeholder="Ej: Entregar antes de las 10am"
+        ></textarea>
+      </div>
+
+      <div class="modal-acciones">
+        <button class="btn-secundario" id="btnCancelarConfirmacion">Cancelar</button>
+        <button class="btn-primario" id="btnEnviarPedido">Enviar pedido</button>
       </div>
 
     </div>
+  </div>
 
+  <!-- Modal de éxito -->
+  <div class="modal-overlay" id="modalExito">
+    <div class="modal" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+      <h3 style="margin-bottom:8px;">¡Pedido enviado!</h3>
+      <p style="font-size:13px;color:#80868b;margin-bottom:6px;">
+        Tu pedido ha sido registrado exitosamente.
+      </p>
+      <p style="font-size:14px;font-weight:500;color:var(--azul-principal);margin-bottom:20px;">
+        N° de pedido: <span id="numeroPedido"></span>
+      </p>
+      <p style="font-size:12px;color:#80868b;margin-bottom:20px;">
+        El equipo de Chun Blum procesará tu pedido y podrás hacer seguimiento desde "Mis pedidos".
+      </p>
+      <button class="btn-primario" id="btnCerrarExito" style="width:100%;">
+        Entendido
+      </button>
+    </div>
   </div>
 
   <script type="module" src="../js/catalogo.js"></script>
