@@ -19,7 +19,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const rol = docSnap.data().rol;
-  console.log("Rol del usuario:", rol);
   renderizarSidebar(rol, "usuarios.html");
   configurarCerrarSesion();
   cargarUsuarios();

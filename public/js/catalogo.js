@@ -218,6 +218,30 @@ window.eliminarDelCarrito = function(productoId) {
   aplicarFiltros();
 };
 
+// ── Cambiar cantidad en carrito ───────────────────────────────────
+window.cambiarCantidadCarrito = function(productoId, delta) {
+  const item     = carrito[productoId];
+  const producto = todosLosProductos.find(p => p.id === productoId);
+  if (!item || !producto) return;
+
+  const stockDisponible = producto.stockDisponible + item.cantidad;
+  const nuevaCantidad   = item.cantidad + delta;
+
+  if (nuevaCantidad <= 0 || nuevaCantidad > stockDisponible) return;
+
+  carrito[productoId].cantidad = nuevaCantidad;
+  carrito[productoId].subtotal = nuevaCantidad * item.precioUnitario;
+
+  actualizarCarrito();
+};
+
+// ── Vaciar carrito ────────────────────────────────────────────────
+window.vaciarCarrito = function() {
+  carrito = {};
+  actualizarCarrito();
+  aplicarFiltros();
+};
+
 // ── Actualizar vista del carrito ──────────────────────────────────
 function actualizarCarrito() {
   const items = Object.values(carrito);
@@ -236,32 +260,64 @@ function actualizarCarrito() {
   const totalPesos    = items.reduce((s, i) => s + i.subtotal, 0);
 
   carritoContenido.innerHTML = "";
+
+  // Botón vaciar carrito
+  const btnVaciar = document.createElement("div");
+  btnVaciar.style.cssText = "text-align:right;margin-bottom:8px;";
+  btnVaciar.innerHTML = `<button class="btn-vaciar-carrito" onclick="vaciarCarrito()">Vaciar carrito</button>`;
+  carritoContenido.appendChild(btnVaciar);
+
   items.forEach(item => {
+    const producto = todosLosProductos.find(p => p.id === item.productoId);
+    const stockMax = producto ? producto.stockDisponible + item.cantidad : item.cantidad;
+
     const div = document.createElement("div");
     div.className = "carrito-item";
     div.innerHTML = `
       <div class="carrito-item-info">
         <div class="carrito-item-nombre">${item.nombre}</div>
         <div class="carrito-item-ref">${item.referencia}</div>
+        
         <div class="carrito-item-subtotal">
-          ${item.cantidad} × $${item.precioUnitario.toLocaleString("es-CO")} =
           $${item.subtotal.toLocaleString("es-CO")}
         </div>
       </div>
       <div class="carrito-item-acciones">
-        <button class="btn-eliminar-item" onclick="eliminarDelCarrito('${item.productoId}')">
-          Quitar
-        </button>
+        <div class="cantidad-carrito">
+          <button
+            class="btn-cantidad"
+            onclick="cambiarCantidadCarrito('${item.productoId}', -1)"
+            ${item.cantidad <= 1 ? "disabled" : ""}
+          >−</button>
+          <span class="cantidad-carrito-valor">${item.cantidad}</span>
+          <button
+            class="btn-cantidad"
+            onclick="cambiarCantidadCarrito('${item.productoId}', 1)"
+            ${item.cantidad >= producto.stockDisponible ? "disabled" : ""}
+          >+</button>
+          <button
+            class="btn-cantidad btn-trash"
+            onclick="eliminarDelCarrito('${item.productoId}')"
+            title="Quitar producto"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4h6v2"/>
+            </svg>
+          </button>
+        </div>
       </div>
     `;
     carritoContenido.appendChild(div);
   });
 
-  carritoTotal.textContent        = `$${totalPesos.toLocaleString("es-CO")}`;
-  carritoTotalUnidades.textContent = `${totalUnidades} unidades`;
-  carritoFooter.style.display      = "block";
-  carritoContador.style.display    = "inline-block";
-  carritoContador.textContent      = `${items.length} ${items.length === 1 ? "item" : "items"}`;
+  carritoTotal.textContent         = `$${totalPesos.toLocaleString("es-CO")}`;
+  carritoTotalUnidades.textContent  = `${totalUnidades} unidades`;
+  carritoFooter.style.display       = "block";
+  carritoContador.style.display     = "inline-block";
+  carritoContador.textContent       = `${items.length} ${items.length === 1 ? "item" : "items"}`;
 }
 
 // ── Abrir modal de confirmación ───────────────────────────────────

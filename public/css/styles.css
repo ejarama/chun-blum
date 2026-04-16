@@ -1441,3 +1441,77 @@ body {
     display: none;
   }
 }
+
+/* ── Controles de cantidad en carrito ────────── */
+.cantidad-carrito {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  width: fit-content;
+  margin-top: 6px;
+}
+
+.btn-cantidad {
+  background: var(--gris-claro);
+  border: none;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--gris-texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-cantidad:hover {
+  background: #e8eaed;
+}
+
+.btn-cantidad:disabled {
+  color: #bdc1c6;
+  cursor: not-allowed;
+}
+
+.cantidad-carrito-valor {
+  width: 36px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gris-texto);
+  border-left: 1px solid var(--gris-borde);
+  border-right: 1px solid var(--gris-borde);
+  padding: 4px 0;
+}
+
+.btn-vaciar-carrito {
+  background: none;
+  border: none;
+  color: #80868b;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.btn-vaciar-carrito:hover {
+  color: var(--rojo-error);
+}
+
+/* ── Botón trash en carrito ──────────────────── */
+.btn-trash {
+  border-left: 1px solid var(--gris-borde);
+  color: #80868b;
+  width: 32px;
+}
+
+.btn-trash:hover {
+  background: #fce8e6;
+  color: var(--rojo-error);
+}
