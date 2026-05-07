@@ -48,28 +48,6 @@ const errorCantidad    = document.getElementById("errorCantidad");
 const historialReciente = document.getElementById("historialReciente");
 
 
-function configurarSidebar(rol) {
-  const nav = document.querySelector(".sidebar-nav");
-  const logo = document.querySelector(".sidebar-logo p");
-
-  if (rol === "operaria") {
-    logo.textContent = "Panel de producción";
-    nav.innerHTML = `
-      <a href="produccion.html" class="activo">Registrar lote</a>
-      <a href="inventario.html">Inventario</a>
-    `;
-  } else {
-    logo.textContent = "Panel de administración";
-    nav.innerHTML = `
-      <a href="dashboard.html">Inicio</a>
-      <a href="usuarios.html">Usuarios</a>
-      <a href="inventario.html">Inventario</a>
-      <a href="produccion.html" class="activo">Registrar lote</a>
-      <a href="pedidos.html">Pedidos</a>
-    `;
-  }
-}
-
 // ── Cargar productos desde Firestore ──────────────────────────────
 async function cargarProductos() {
   try {
@@ -87,6 +65,14 @@ async function cargarProductos() {
       option.textContent = `${p.referencia} — ${p.nombre}`;
       selectProducto.appendChild(option);
     });
+
+    // ── Precargar producto desde acceso rápido del inventario ──────
+    const params = new URLSearchParams(window.location.search);
+    const productoIdParam = params.get("productoId");
+    if (productoIdParam && productosMap[productoIdParam]) {
+      selectProducto.value = productoIdParam;
+      selectProducto.dispatchEvent(new Event("change"));
+    }
 
   } catch (error) {
     selectProducto.innerHTML = '<option value="">Error al cargar productos</option>';

@@ -1989,3 +1989,55 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+
+/* ── 16. Gestión de catálogo — HU-2.3 ───────── */
+
+/* Campo de solo lectura en el modal (referencia y presentación) */
+.campo-referencia-display {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  padding: 10px 14px;
+  background: var(--gris-claro);
+  border-radius: var(--radio);
+  border: 1px solid var(--gris-borde);
+}
+
+/* Contenedor de acciones en cada fila del inventario */
+.producto-row-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: nowrap;
+  padding: 4px 0;
+}
+
+/* Botón icono acceso rápido a producción */
+.btn-accion-produccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--verde-exito);
+  color: var(--blanco);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.btn-accion-produccion:hover {
+  opacity: 0.8;
+}
+
+/* En escritorio: quinta columna para acciones en inventario */
+@media (min-width: 768px) {
+  .tabla-header,
+  .producto-row {
+    grid-template-columns: 1fr 100px 100px 160px auto;
+  }
+}
