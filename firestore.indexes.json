@@ -7,6 +7,14 @@
         { "fieldPath": "distribuidorId", "order": "ASCENDING" },
         { "fieldPath": "fechaPedido",    "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "pedidos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "estado",                   "order": "ASCENDING" },
+        { "fieldPath": "fechaEntregaSolicitada",    "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
