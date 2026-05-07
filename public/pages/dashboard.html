@@ -27,6 +27,64 @@
     <button class="btn-cerrar-sesion" id="btnCerrarSesion">Salir</button>
   </nav>
 
+  <!-- Contenido -->
+  <div class="contenido">
+
+    <!-- Bienvenida -->
+    <div class="catalogo-bienvenida">
+      <h3 id="saludo">Bienvenido</h3>
+      <p>Resumen del día — toca una tarjeta para ir directamente a esa sección.</p>
+    </div>
+
+    <!-- Indicador tiempo real -->
+    <div class="indicador-tiempo-real" style="margin-bottom:16px;">
+      <div class="punto-verde"></div>
+      <span>Datos actualizados en tiempo real</span>
+    </div>
+
+    <!-- Tarjetas de resumen (navegables) -->
+    <div class="dash-stats">
+
+      <a href="pedidos.html" class="dash-stat-card">
+        <div class="dash-stat-icono">📋</div>
+        <div class="dash-stat-numero" id="statPedidosHoy">—</div>
+        <div class="dash-stat-label">Pedidos del día</div>
+        <div class="dash-stat-link">Ver pedidos →</div>
+      </a>
+
+      <a href="pedidos.html" class="dash-stat-card dash-stat-alerta" id="cardPendientes">
+        <div class="dash-stat-icono">⏳</div>
+        <div class="dash-stat-numero" id="statPendientes">—</div>
+        <div class="dash-stat-label">Pendientes de confirmar</div>
+        <div class="dash-stat-link">Ver pedidos →</div>
+      </a>
+
+      <a href="inventario.html" class="dash-stat-card dash-stat-critico" id="cardStockBajo">
+        <div class="dash-stat-icono">⚠️</div>
+        <div class="dash-stat-numero" id="statStockBajo">—</div>
+        <div class="dash-stat-label">Productos stock bajo</div>
+        <div class="dash-stat-link">Ver inventario →</div>
+      </a>
+
+    </div>
+
+    <!-- Alertas de stock -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Alertas de stock crítico</h3>
+        <a href="inventario.html" class="btn-secundario" style="font-size:13px;">
+          Ir a inventario
+        </a>
+      </div>
+
+      <div id="listaAlertasStock">
+        <div class="loading">Cargando...</div>
+      </div>
+    </div>
+
+  </div>
+
   <script type="module" src="../js/dashboard.js"></script>
+
 </body>
 </html>

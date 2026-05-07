@@ -1854,3 +1854,138 @@ body {
     gap: 16px;
   }
 }
+
+
+/* ── 15. Dashboard de administrador ──────────── */
+
+/* Fila de tarjetas de resumen */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* Tarjeta navegable */
+.dash-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 16px 16px;
+  background: var(--blanco);
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--sombra);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+  border-color: var(--azul-principal);
+}
+
+/* Variante ámbar — hay pendientes */
+.dash-stat-alerta .dash-stat-numero { color: #b45309; }
+
+/* Variante roja — hay stock bajo */
+.dash-stat-critico .dash-stat-numero { color: var(--rojo-error); }
+
+.dash-stat-icono {
+  font-size: 28px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.dash-stat-numero {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--azul-principal);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.dash-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #80868b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.dash-stat-link {
+  font-size: 12px;
+  color: var(--azul-principal);
+  font-weight: 500;
+}
+
+/* Lista de alertas de stock */
+.dash-alert-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.dash-alert-fila:last-child {
+  border-bottom: none;
+}
+
+.dash-alert-info { flex: 1; }
+
+.dash-alert-nombre {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gris-texto);
+}
+
+.dash-alert-ref {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 2px;
+}
+
+.dash-alert-stock {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dash-alert-actual {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--rojo-error);
+}
+
+.dash-alert-umbral {
+  font-size: 11px;
+  color: #80868b;
+}
+
+.dash-alert-vacio {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--verde-exito);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* En móvil las tarjetas ocupan toda la fila */
+@media (max-width: 600px) {
+  .dash-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 767px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
