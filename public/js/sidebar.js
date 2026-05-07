@@ -9,7 +9,8 @@ const MENU_ITEMS = [
   { label: "Inventario",      href: "inventario.html", roles: ["admin", "operaria"] },
   { label: "Producción",      href: "produccion.html", roles: ["admin", "operaria"] },
   { label: "Pedidos",         href: "pedidos.html",    roles: ["admin", "vendedor"] },
-  { label: "Mis pedidos",     href: "catalogo.html",   roles: ["distribuidor"] },
+  { label: "Catálogo",        href: "catalogo.html",   roles: ["distribuidor"] },
+  { label: "Mis pedidos",     href: "historial.html",  roles: ["distribuidor"] },
 ];
 
 const PANEL_LABELS = {
