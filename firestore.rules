@@ -3,17 +3,66 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2026, 4, 26);
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    // Lee el rol del documento del usuario en Firestore
+    function rol() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol;
+    }
+
+    // Campos que modifica la transacción atómica al confirmar un pedido
+    function esSoloActualizacionDeStock() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['stockDisponible', 'estado', 'ultimaActualizacion']);
+    }
+
+    // ── Usuarios ──────────────────────────────────────────────────
+    match /usuarios/{uid} {
+      // Cada usuario lee su propio perfil sin necesitar get()
+      allow read:  if autenticado() && request.auth.uid == uid;
+      // Admin gestiona todos los usuarios
+      allow read, write: if autenticado() && rol() == 'admin';
+    }
+
+    // ── Productos ─────────────────────────────────────────────────
+    match /productos/{productoId} {
+      allow read: if autenticado();
+
+      // Admin y operaria controlan el inventario completo
+      allow write: if autenticado() && rol() in ['admin', 'operaria'];
+
+      // Cualquier autenticado puede actualizar SOLO los campos de stock.
+      // Esto permite la transacción del pedido sin necesitar get() al rol,
+      // evitando el ciclo de evaluación de reglas en la transacción.
+      allow update: if autenticado() && esSoloActualizacionDeStock();
+    }
+
+    // ── Pedidos ───────────────────────────────────────────────────
+    match /pedidos/{pedidoId} {
+      // El distribuidor lee sus propios pedidos primero (sin get()),
+      // el resto pasa por verificación de rol
+      allow read: if autenticado() && (
+        resource.data.distribuidorId == request.auth.uid ||
+        rol() in ['admin', 'vendedor']
+      );
+
+      // Distribuidor solo puede crear pedidos con su propio uid
+      allow create: if autenticado() &&
+        request.resource.data.distribuidorId == request.auth.uid;
+
+      // Vendedor y admin gestionan el estado del pedido
+      allow update: if autenticado() && rol() in ['admin', 'vendedor'];
+
+      allow delete: if false;
+    }
+
+    // ── Lotes de producción ───────────────────────────────────────
+    match /lotes/{loteId} {
+      allow read:          if autenticado() && rol() in ['admin', 'operaria', 'vendedor'];
+      allow create:        if autenticado() && rol() in ['admin', 'operaria'];
+      allow update, delete: if autenticado() && rol() == 'admin';
     }
   }
 }

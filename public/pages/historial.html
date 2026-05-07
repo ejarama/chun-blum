@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis pedidos — Helados Chun Blum</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="pagina">
+
+  <!-- Sidebar (escritorio) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Helados Chun Blum</h1>
+      <p>Cargando...</p>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <button id="btnCerrarSesionSidebar">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Navbar (móvil) -->
+  <nav class="navbar">
+    <button class="btn-menu" id="btnMenu">☰</button>
+    <h2>Mis pedidos</h2>
+    <button class="btn-cerrar-sesion" id="btnCerrarSesion">Salir</button>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="contenido">
+
+    <!-- Bienvenida -->
+    <div class="catalogo-bienvenida">
+      <h3 id="saludo">Bienvenido</h3>
+      <p>Aquí puedes ver el estado actual e historial de todos tus pedidos.</p>
+    </div>
+
+    <!-- Card historial -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Historial de pedidos</h3>
+      </div>
+
+      <div class="indicador-tiempo-real">
+        <div class="punto-verde"></div>
+        <span>Estado actualizado en tiempo real</span>
+      </div>
+
+      <div id="listaHistorial">
+        <div class="loading">Cargando pedidos...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal de detalle del pedido -->
+  <div class="modal-overlay" id="modalDetalle">
+    <div class="modal" style="max-height:90vh;overflow-y:auto;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Detalle del pedido</h3>
+        <button
+          id="btnCerrarDetalle"
+          style="background:none;border:none;font-size:20px;cursor:pointer;color:#80868b;line-height:1;"
+        >✕</button>
+      </div>
+
+      <div id="contenidoDetalle">
+        <!-- Renderizado por historial.js -->
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="../js/historial.js"></script>
+
+</body>
+</html>

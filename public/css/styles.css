@@ -1433,6 +1433,220 @@ body {
   cursor: pointer;
 }
 
+
+/* ── 13. Historial de pedidos ────────────────── */
+
+/* Badges de estado */
+.estado-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.estado-pendiente      { background: #fef3c7; color: #92400e; }
+.estado-confirmado     { background: #dbeafe; color: #1e40af; }
+.estado-preparacion    { background: #e0e7ff; color: #3730a3; }
+.estado-enviado        { background: #d1fae5; color: #065f46; }
+.estado-entregado      { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+.estado-cancelado      { background: #fee2e2; color: #991b1b; }
+.estado-default        { background: var(--gris-claro); color: var(--gris-texto); }
+
+/* Filas del historial */
+.pedido-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px;
+  margin: 0 -12px;
+  border-bottom: 1px solid var(--gris-borde);
+  cursor: pointer;
+  border-radius: var(--radio);
+  transition: background 0.15s;
+}
+
+.pedido-fila:last-child { border-bottom: none; }
+
+.pedido-fila:hover { background: var(--gris-claro); }
+
+.pedido-fila-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pedido-numero {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+.pedido-fecha {
+  font-size: 12px;
+  color: #80868b;
+  margin-top: 3px;
+}
+
+.pedido-productos-resumen {
+  font-size: 12px;
+  color: #80868b;
+  margin-top: 2px;
+}
+
+.pedido-fila-derecha {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.pedido-total {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--azul-principal);
+  margin-bottom: 5px;
+}
+
+.pedido-entrega {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 5px;
+}
+
+.pedido-fila-accion {
+  color: #80868b;
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Estado vacío del historial */
+.historial-empty {
+  text-align: center;
+  padding: 48px 20px;
+}
+
+.historial-empty-icono {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.historial-empty-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  margin-bottom: 8px;
+}
+
+.historial-empty-texto {
+  font-size: 14px;
+  color: #80868b;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Modal de detalle */
+.detalle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.detalle-numero {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gris-texto);
+}
+
+.detalle-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.detalle-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detalle-meta-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #80868b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detalle-meta-valor {
+  font-size: 13px;
+  color: var(--gris-texto);
+  font-weight: 500;
+}
+
+.detalle-meta-full { grid-column: 1 / -1; }
+
+.detalle-productos-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gris-texto);
+  margin-bottom: 10px;
+}
+
+.detalle-producto-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.detalle-producto-fila:last-child { border-bottom: none; }
+
+.detalle-producto-info { flex: 1; min-width: 0; }
+
+.detalle-producto-nombre {
+  font-size: 13px;
+  color: var(--gris-texto);
+  font-weight: 500;
+}
+
+.detalle-producto-ref {
+  font-size: 11px;
+  color: #80868b;
+  margin-top: 2px;
+}
+
+.detalle-producto-cant {
+  font-size: 13px;
+  color: #80868b;
+  white-space: nowrap;
+}
+
+.detalle-producto-subtotal {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--azul-principal);
+  text-align: right;
+  min-width: 80px;
+  white-space: nowrap;
+}
+
+.detalle-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0 0;
+  margin-top: 8px;
+  border-top: 2px solid var(--gris-borde);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gris-texto);
+}
+
 @media (min-width: 768px) {
   .menu-mobile {
     display: none;
