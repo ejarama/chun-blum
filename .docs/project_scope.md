@@ -109,7 +109,7 @@ Sistema web de gestión de inventario y pedidos para el emprendimiento **Helados
   distribuidorNombre: string,
   fechaPedido: Timestamp,
   fechaEntregaSolicitada: string,
-  estado: "pendiente" | "confirmado" | "en_preparacion" | "despachado" | "entregado",
+  estado: "pendiente" | "confirmado" | "en_preparacion" | "enviado" | "entregado",
   productos: [{ productoId, nombre, referencia, cantidad, precioUnitario }],
   totalPedido: number,
   formaPago: "efectivo" | "transferencia",
@@ -124,7 +124,7 @@ Sistema web de gestión de inventario y pedidos para el emprendimiento **Helados
 
 1. **Reserva de stock:** Al confirmar un pedido, el stock se descuenta inmediatamente con una transacción atómica (`runTransaction`) para evitar sobreventas.
 2. **Cambio de estado de producto:** Si `stockDisponible > 0` el estado debe ser `"disponible"`. Si llega a 0 debe pasar a `"agotado"`. El cambio a `"en_produccion"` solo lo hace el administrador manualmente.
-3. **Estado de pedidos:** El flujo es unidireccional — nunca retrocede: `pendiente → confirmado → en_preparacion → despachado → entregado`.
+3. **Estado de pedidos:** El flujo es unidireccional — nunca retrocede: `pendiente → confirmado → en_preparacion → enviado → entregado`.
 4. **Privacidad entre distribuidores:** Un distribuidor solo puede ver sus propios pedidos. Nunca el historial de otros distribuidores.
 5. **Fecha mínima de entrega:** Los pedidos deben solicitarse con mínimo 2 días de anticipación.
 6. **Umbral de stock bajo:** Cuando `stockDisponible < umbralMinimo` el sistema debe mostrar alerta visual al administrador.

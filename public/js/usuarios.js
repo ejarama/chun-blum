@@ -28,7 +28,6 @@ onAuthStateChanged(auth, async (user) => {
 // ── Referencias DOM ───────────────────────────────────
 const listaUsuarios     = document.getElementById("listaUsuarios");
 const btnNuevoUsuario   = document.getElementById("btnNuevoUsuario");
-const btnCerrarSesion   = document.getElementById("btnCerrarSesion");
 const modalOverlay      = document.getElementById("modalOverlay");
 const btnCancelarModal  = document.getElementById("btnCancelarModal");
 const btnGuardarUsuario = document.getElementById("btnGuardarUsuario");
