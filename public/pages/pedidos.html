@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedidos activos — Helados Chun Blum</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="pagina">
+
+  <!-- Sidebar (escritorio) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Helados Chun Blum</h1>
+      <p>Cargando...</p>
+    </div>
+    <nav class="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <button id="btnCerrarSesionSidebar">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Navbar (móvil) -->
+  <nav class="navbar">
+    <button class="btn-menu" id="btnMenu">☰</button>
+    <h2>Pedidos activos</h2>
+    <button class="btn-cerrar-sesion" id="btnCerrarSesion">Salir</button>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="contenido">
+
+    <!-- Bienvenida -->
+    <div class="catalogo-bienvenida">
+      <h3 id="saludo">Bienvenido</h3>
+      <p>Pedidos pendientes y en preparación, ordenados por fecha de entrega.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="catalogo-stats" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statActivos">—</div>
+        <div class="catalogo-stat-label">Activos</div>
+      </div>
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statPendientes">—</div>
+        <div class="catalogo-stat-label">Pendientes</div>
+      </div>
+      <div class="catalogo-stat">
+        <div class="catalogo-stat-numero" id="statPreparacion">—</div>
+        <div class="catalogo-stat-label">En preparación</div>
+      </div>
+    </div>
+
+    <!-- Card con lista de pedidos -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Pedidos activos</h3>
+      </div>
+
+      <div class="indicador-tiempo-real">
+        <div class="punto-verde"></div>
+        <span>Actualizando en tiempo real</span>
+      </div>
+
+      <div id="listaPedidos">
+        <div class="loading">Cargando pedidos...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal de detalle -->
+  <div class="modal-overlay" id="modalDetalle">
+    <div class="modal" style="max-height:90vh;overflow-y:auto;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;">Detalle del pedido</h3>
+        <button
+          id="btnCerrarDetalle"
+          style="background:none;border:none;font-size:20px;cursor:pointer;color:#80868b;line-height:1;"
+        >✕</button>
+      </div>
+
+      <div id="contenidoDetalle">
+        <!-- Renderizado por pedidos.js -->
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="../js/pedidos.js"></script>
+
+</body>
+</html>

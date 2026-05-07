@@ -1729,3 +1729,128 @@ body {
   background: #fce8e6;
   color: var(--rojo-error);
 }
+
+
+/* ── 14. Vista de pedidos — vendedor ─────────── */
+
+/* Cards de pedido */
+.pedido-vendor-card {
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.pedido-vendor-card:last-child {
+  margin-bottom: 0;
+}
+
+.pedido-vendor-card:hover {
+  box-shadow: var(--sombra);
+  border-color: var(--azul-principal);
+}
+
+.pedido-vendor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.pedido-vendor-numero {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gris-texto);
+}
+
+.pedido-vendor-distribuidor {
+  font-size: 13px;
+  color: #80868b;
+  margin-top: 3px;
+}
+
+.pedido-vendor-body {
+  margin-bottom: 12px;
+}
+
+.pedido-vendor-productos {
+  font-size: 13px;
+  color: var(--gris-texto);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.pedido-vendor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #80868b;
+}
+
+.pedido-vendor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--gris-borde);
+}
+
+.pedido-vendor-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--azul-principal);
+}
+
+.btn-ver-detalle {
+  background: none;
+  border: 1px solid var(--azul-principal);
+  color: var(--azul-principal);
+  border-radius: var(--radio);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-ver-detalle:hover {
+  background: var(--azul-principal);
+  color: var(--blanco);
+}
+
+/* Info del distribuidor en el detalle */
+.detalle-distribuidor-box {
+  background: var(--gris-claro);
+  border-radius: var(--radio);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.detalle-distribuidor-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+.detalle-distribuidor-email {
+  font-size: 12px;
+  color: #80868b;
+  margin-top: 3px;
+}
+
+/* Grid de cards en escritorio */
+@media (min-width: 768px) {
+  .pedidos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .pedido-vendor-meta {
+    flex-direction: row;
+    gap: 16px;
+  }
+}
