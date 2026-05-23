@@ -86,6 +86,19 @@ body {
 }
 
 .login-branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  width: 100%;
+}
+
+.login-branding-content {
+  text-align: center;
+}
+
+.login-brand-nombre,
+.login-brand-slogan {
   display: none;
 }
 
@@ -1193,6 +1206,11 @@ body {
     max-width: 320px;
   }
 
+  .login-brand-nombre,
+  .login-brand-slogan {
+    display: block;
+  }
+
   .login-form-panel {
     flex: 1;
     min-height: 100vh;
@@ -1877,8 +1895,8 @@ body {
 
 .pedido-vendor-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
   padding-top: 12px;
   border-top: 1px solid var(--gris-borde);
 }
@@ -1937,6 +1955,16 @@ body {
   .pedido-vendor-meta {
     flex-direction: row;
     gap: 16px;
+  }
+
+  .pedido-vendor-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pedido-vendor-acciones {
+    justify-content: flex-end;
   }
 }
 
@@ -2119,8 +2147,24 @@ body {
   opacity: 0.8;
 }
 
-/* En escritorio: quinta columna para acciones en inventario */
-@media (min-width: 768px) {
+/* Tablet (768px–1023px): oculta fecha, grid de 4 columnas */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tabla-header,
+  .producto-row {
+    grid-template-columns: 1fr 80px 100px auto;
+  }
+
+  .ultima-actualizacion {
+    display: none;
+  }
+
+  .tabla-header span:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Escritorio (1024px+): quinta columna con fecha y acciones */
+@media (min-width: 1024px) {
   .tabla-header,
   .producto-row {
     grid-template-columns: 1fr 100px 100px 160px auto;
@@ -2133,8 +2177,8 @@ body {
 .pedido-vendor-acciones {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .btn-avanzar-estado {
