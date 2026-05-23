@@ -2,10 +2,47 @@ import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   collection, doc, getDoc, query, where, onSnapshot,
+  updateDoc, arrayUnion, serverTimestamp, Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 import { renderizarSidebar, configurarCerrarSesion } from "./sidebar.js";
 
 // ── Lógica de negocio pura (exportada para tests) ─────────────────
+
+const FLUJO_ESTADOS = [
+  "pendiente",
+  "confirmado",
+  "en_preparacion",
+  "enviado",
+  "entregado",
+];
+
+const TEXTOS_BOTON = {
+  pendiente:      "Confirmar pedido",
+  confirmado:     "Marcar en preparación",
+  en_preparacion: "Marcar como enviado",
+  enviado:        "Marcar como entregado",
+};
+
+export function obtenerSiguienteEstado(estadoActual) {
+  const idx = FLUJO_ESTADOS.indexOf(estadoActual);
+  if (idx === -1 || idx === FLUJO_ESTADOS.length - 1) return null;
+  return FLUJO_ESTADOS[idx + 1];
+}
+
+export function puedeModificarEstado(rol) {
+  return rol === "vendedor" || rol === "admin";
+}
+
+export function esRetroceso(estadoActual, estadoNuevo) {
+  const idxActual = FLUJO_ESTADOS.indexOf(estadoActual);
+  const idxNuevo  = FLUJO_ESTADOS.indexOf(estadoNuevo);
+  if (idxActual === -1 || idxNuevo === -1) return false;
+  return idxNuevo < idxActual;
+}
+
+export function obtenerTextoBoton(estadoActual) {
+  return TEXTOS_BOTON[estadoActual] ?? null;
+}
 
 export function filtrarPedidosActivos(pedidos) {
   return pedidos.filter(
@@ -39,6 +76,7 @@ export function puedeAccederPedidos(rol) {
 // ── Estado ────────────────────────────────────────────────────────
 let unsubscribe        = null;
 let pedidoSeleccionado = null;
+let usuarioActual      = null;
 
 // ── Autenticación ─────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
@@ -59,6 +97,8 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  usuarioActual = { uid: user.uid, nombre: datos.nombre, rol: datos.rol };
+
   const saludo = document.getElementById("saludo");
   if (saludo) saludo.textContent = `Hola, ${datos.nombre}`;
 
@@ -67,6 +107,57 @@ onAuthStateChanged(auth, async (user) => {
   inicializarEventosModal();
   inicializarPedidos();
 });
+
+// ── Avance de estado ──────────────────────────────────────────────
+async function avanzarEstadoPedido(pedidoId, estadoActual, btnEl) {
+  const siguiente = obtenerSiguienteEstado(estadoActual);
+  if (!siguiente) return;
+
+  if (esRetroceso(estadoActual, siguiente)) {
+    mostrarErrorFila(pedidoId, "No es posible retroceder el estado del pedido");
+    return;
+  }
+
+  if (siguiente === "entregado") {
+    const confirmado = window.confirm(
+      "¿Confirmar entrega? Esta acción no se puede deshacer."
+    );
+    if (!confirmado) return;
+  }
+
+  btnEl.disabled   = true;
+  btnEl.textContent = "Actualizando...";
+
+  try {
+    await updateDoc(doc(db, "pedidos", pedidoId), {
+      estado:           siguiente,
+      fechaUltimaActualizacion: serverTimestamp(),
+      historialEstados: arrayUnion({
+        estado:        siguiente,
+        fecha:         Timestamp.now(),
+        usuarioId:     usuarioActual.uid,
+        usuarioNombre: usuarioActual.nombre,
+      }),
+    });
+  } catch {
+    mostrarErrorFila(pedidoId, "Error al actualizar el estado. Intenta de nuevo.");
+    btnEl.disabled    = false;
+    btnEl.textContent = obtenerTextoBoton(estadoActual);
+  }
+}
+
+function mostrarErrorFila(pedidoId, mensaje) {
+  const card = document.querySelector(`.pedido-vendor-card[data-id="${pedidoId}"]`);
+  if (!card) return;
+  let errorEl = card.querySelector(".pedido-error-estado");
+  if (!errorEl) {
+    errorEl = document.createElement("div");
+    errorEl.className = "pedido-error-estado";
+    card.appendChild(errorEl);
+  }
+  errorEl.textContent = mensaje;
+  setTimeout(() => errorEl.remove(), 4000);
+}
 
 // ── Pedidos activos en tiempo real ────────────────────────────────
 function inicializarPedidos() {
@@ -77,7 +168,7 @@ function inicializarPedidos() {
 
   const q = query(
     collection(db, "pedidos"),
-    where("estado", "in", ["pendiente", "en_preparacion"])
+    where("estado", "in", ["pendiente", "confirmado", "en_preparacion", "enviado"])
   );
 
   unsubscribe = onSnapshot(q, (snapshot) => {
@@ -104,8 +195,8 @@ function actualizarStats(pedidos) {
   const statPreparacion = document.getElementById("statPreparacion");
 
   if (statActivos)     statActivos.textContent     = pedidos.length;
-  if (statPendientes)  statPendientes.textContent  = pedidos.filter(p => p.estado === "pendiente").length;
-  if (statPreparacion) statPreparacion.textContent = pedidos.filter(p => p.estado === "en_preparacion").length;
+  if (statPendientes)  statPendientes.textContent  = pedidos.filter(p => p.estado === "pendiente" || p.estado === "confirmado").length;
+  if (statPreparacion) statPreparacion.textContent = pedidos.filter(p => p.estado === "en_preparacion" || p.estado === "enviado").length;
 }
 
 // ── Renderizar lista de pedidos ───────────────────────────────────
@@ -132,6 +223,11 @@ function renderizarPedidos(pedidos) {
 
     const total = (pedido.totalPedido ?? 0).toLocaleString("es-CO");
 
+    const puedeAvanzar = usuarioActual && puedeModificarEstado(usuarioActual.rol)
+      && obtenerSiguienteEstado(pedido.estado) !== null;
+
+    const textoBtn = obtenerTextoBoton(pedido.estado);
+
     const card = document.createElement("div");
     card.className = "pedido-vendor-card";
     card.dataset.id = pedido.id;
@@ -152,9 +248,20 @@ function renderizarPedidos(pedidos) {
       </div>
       <div class="pedido-vendor-footer">
         <span class="pedido-vendor-total">$${total}</span>
-        <button class="btn-ver-detalle">Ver detalle →</button>
+        <div class="pedido-vendor-acciones">
+          ${puedeAvanzar ? `<button class="btn-avanzar-estado">${textoBtn}</button>` : ""}
+          <button class="btn-ver-detalle">Ver detalle →</button>
+        </div>
       </div>
     `;
+
+    if (puedeAvanzar) {
+      const btnAvanzar = card.querySelector(".btn-avanzar-estado");
+      btnAvanzar.addEventListener("click", (e) => {
+        e.stopPropagation();
+        avanzarEstadoPedido(pedido.id, pedido.estado, btnAvanzar);
+      });
+    }
 
     card.addEventListener("click", () => abrirDetalle(pedido));
     listaPedidos.appendChild(card);
