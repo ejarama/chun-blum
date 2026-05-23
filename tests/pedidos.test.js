@@ -6,12 +6,16 @@ vi.mock("https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js", () => ({
 }));
 
 vi.mock("https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js", () => ({
-  collection:  vi.fn(),
-  doc:         vi.fn(),
-  getDoc:      vi.fn(),
-  query:       vi.fn(),
-  where:       vi.fn(),
-  onSnapshot:  vi.fn(),
+  collection:      vi.fn(),
+  doc:             vi.fn(),
+  getDoc:          vi.fn(),
+  query:           vi.fn(),
+  where:           vi.fn(),
+  onSnapshot:      vi.fn(),
+  updateDoc:       vi.fn(),
+  arrayUnion:      vi.fn(),
+  serverTimestamp: vi.fn(),
+  Timestamp:       { now: vi.fn(() => ({ seconds: 0, nanoseconds: 0 })) },
 }));
 
 vi.mock("../public/js/firebase-config.js", () => ({
@@ -29,6 +33,10 @@ import {
   ordenarPorFechaEntrega,
   obtenerResumenProductos,
   puedeAccederPedidos,
+  obtenerSiguienteEstado,
+  puedeModificarEstado,
+  esRetroceso,
+  obtenerTextoBoton,
 } from "../public/js/pedidos.js";
 
 // ── Test 1: solo muestra pedidos con estado 'pendiente' o 'en_preparacion' ─
@@ -192,5 +200,114 @@ describe("puedeAccederPedidos", () => {
     expect(puedeAccederPedidos("")).toBe(false);
     expect(puedeAccederPedidos(null)).toBe(false);
     expect(puedeAccederPedidos(undefined)).toBe(false);
+  });
+});
+
+// ── Test 5: flujo de estados válido ───────────────────────────────
+describe("obtenerSiguienteEstado", () => {
+  it("pendiente → confirmado", () => {
+    expect(obtenerSiguienteEstado("pendiente")).toBe("confirmado");
+  });
+
+  it("confirmado → en_preparacion", () => {
+    expect(obtenerSiguienteEstado("confirmado")).toBe("en_preparacion");
+  });
+
+  it("en_preparacion → enviado", () => {
+    expect(obtenerSiguienteEstado("en_preparacion")).toBe("enviado");
+  });
+
+  it("enviado → entregado", () => {
+    expect(obtenerSiguienteEstado("enviado")).toBe("entregado");
+  });
+
+  it("entregado → null (no hay siguiente)", () => {
+    expect(obtenerSiguienteEstado("entregado")).toBeNull();
+  });
+
+  it("estado inválido → null", () => {
+    expect(obtenerSiguienteEstado("despachado")).toBeNull();
+    expect(obtenerSiguienteEstado("")).toBeNull();
+    expect(obtenerSiguienteEstado(null)).toBeNull();
+  });
+
+  // BDD: Dado pedido en "confirmado" + vendedor → retorna "en_preparacion"
+  it("BDD: pedido confirmado con rol vendedor obtiene siguiente estado en_preparacion", () => {
+    const estadoPedido = "confirmado";
+    const rol          = "vendedor";
+    expect(puedeModificarEstado(rol)).toBe(true);
+    expect(obtenerSiguienteEstado(estadoPedido)).toBe("en_preparacion");
+  });
+});
+
+// ── Test 6: control de acceso para modificar estado ───────────────
+describe("puedeModificarEstado", () => {
+  it("vendedor → true", () => {
+    expect(puedeModificarEstado("vendedor")).toBe(true);
+  });
+
+  it("admin → true", () => {
+    expect(puedeModificarEstado("admin")).toBe(true);
+  });
+
+  it("distribuidor → false", () => {
+    expect(puedeModificarEstado("distribuidor")).toBe(false);
+  });
+
+  it("operaria → false", () => {
+    expect(puedeModificarEstado("operaria")).toBe(false);
+  });
+
+  it("null y cadena vacía → false", () => {
+    expect(puedeModificarEstado(null)).toBe(false);
+    expect(puedeModificarEstado("")).toBe(false);
+    expect(puedeModificarEstado(undefined)).toBe(false);
+  });
+});
+
+// ── Test 7: detección de retrocesos en el flujo ───────────────────
+describe("esRetroceso", () => {
+  it("confirmado → pendiente es retroceso (true)", () => {
+    expect(esRetroceso("confirmado", "pendiente")).toBe(true);
+  });
+
+  it("enviado → en_preparacion es retroceso (true)", () => {
+    expect(esRetroceso("enviado", "en_preparacion")).toBe(true);
+  });
+
+  it("pendiente → confirmado NO es retroceso (false)", () => {
+    expect(esRetroceso("pendiente", "confirmado")).toBe(false);
+  });
+
+  it("mismo estado → false", () => {
+    expect(esRetroceso("en_preparacion", "en_preparacion")).toBe(false);
+  });
+
+  // BDD: intento de "enviado" → "en_preparacion" es retroceso
+  it("BDD: intento de enviado → en_preparacion detectado como retroceso", () => {
+    expect(esRetroceso("enviado", "en_preparacion")).toBe(true);
+  });
+});
+
+// ── Test 8: texto del botón por estado ────────────────────────────
+describe("obtenerTextoBoton", () => {
+  it('pendiente → "Confirmar pedido"', () => {
+    expect(obtenerTextoBoton("pendiente")).toBe("Confirmar pedido");
+  });
+
+  it('confirmado → "Marcar en preparación"', () => {
+    expect(obtenerTextoBoton("confirmado")).toBe("Marcar en preparación");
+  });
+
+  it('en_preparacion → "Marcar como enviado"', () => {
+    expect(obtenerTextoBoton("en_preparacion")).toBe("Marcar como enviado");
+  });
+
+  it('enviado → "Marcar como entregado"', () => {
+    expect(obtenerTextoBoton("enviado")).toBe("Marcar como entregado");
+  });
+
+  it("entregado → null (estado final, sin botón)", () => {
+    expect(obtenerTextoBoton("entregado")).toBeNull();
   });
 });
