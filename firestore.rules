@@ -24,10 +24,12 @@ service cloud.firestore {
 
     // Productos
     match /productos/{productoId} {
-      allow read:   if autenticado();
-      allow write:  if autenticado() && rol() in ['admin', 'operaria'];
-      // Distribuidor puede actualizar solo campos de stock (transaccion de pedido, sin get())
-      allow update: if autenticado() && esSoloActualizacionDeStock();
+      allow read: if autenticado();
+      allow write: if autenticado() && rol() in ['admin', 'operaria'];
+      allow update: if autenticado() && (
+        rol() in ['admin', 'operaria'] ||
+        (rol() == 'distribuidor' && esSoloActualizacionDeStock())
+      );
     }
 
     // Pedidos
