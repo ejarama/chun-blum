@@ -2147,8 +2147,24 @@ body {
   opacity: 0.8;
 }
 
-/* En escritorio: quinta columna para acciones en inventario */
-@media (min-width: 768px) {
+/* Tablet (768px–1023px): oculta fecha, grid de 4 columnas */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tabla-header,
+  .producto-row {
+    grid-template-columns: 1fr 80px 100px auto;
+  }
+
+  .ultima-actualizacion {
+    display: none;
+  }
+
+  .tabla-header span:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Escritorio (1024px+): quinta columna con fecha y acciones */
+@media (min-width: 1024px) {
   .tabla-header,
   .producto-row {
     grid-template-columns: 1fr 100px 100px 160px auto;
